@@ -149,11 +149,6 @@ class UndirectedGraph:
         Vertices to traverse are picked in alphabetical order. If the starting vertex is not in the graph, an empty list is returned.
         If the ending vertex is not in the graph, the search continues as if there was no end vertex (until all vertices are visited).
         """
-        #TODO: Create a recursive function with a deque ---> new deque created for each set of neighbors (only added to that deque if it's not already been visited) -->
-        # alphabetize each deque individually i.e Starting at 'A' -> make new deque if neighbor not in visited, add to new deque alphabetically (i.e.deque('C', 'E')) ->
-        # While deque is not empty --> pop neighbor from front of deque into variable current --> run recursion on that variable current --> repeat until all
-        # deques are empty or until end_vertex is hit(return list_visited as end to recursive call)
-
         v_visited = []
         if v_start not in self.adj_list:
             return v_visited
