@@ -3,6 +3,9 @@
 # Assignment:   #6 Directed Graph Implementation
 # Description: Implementation of an directed graph using an adjacency matrix to store the vertices and edges of the graph
 
+from collections import deque
+import heapq
+
 class DirectedGraph:
     """
     Class to implement directed weighted graph
@@ -134,15 +137,127 @@ class DirectedGraph:
 
     def dfs(self, v_start, v_end=None) -> []:
         """
-        TODO: Write this implementation
+        Method that takes a starting vertex index and an ending vertex index and an ending vertex and returns a list of
+        vertices visited during a recursive depth-first search of the graph. If the search encounters the ending vertex, or if all of
+        the vertices have been visited, the search will stop. Search proceeds by picking the next ascending value vertex.
         """
-        pass
+        visited = []
+        if v_start < 0 or v_start > self.v_count-1:
+            return visited
+        self.rec_dfs(v_start, v_end, visited)
+        return visited
+
+
+    def rec_dfs(self, cur_v=None, end_v=None, list_v=None):
+        """
+        Recursive helper method for depth-first search of the adjacency matrix graph. Takes as parameters a current vertex,
+        the end vertex originally passed, and a list of already-visited vertices.
+        :param cur_v: current vertex being visited
+        :param end_v: ending vertex
+        :param list_v: list of currently visited vertices
+        :return: list of total visited vertices from DFS
+        """
+
+        # Append the new vertex to list of vertices visited
+        if cur_v not in list_v:
+            list_v.append(cur_v)
+
+        # Return conditions without visiting additional vertices
+        if cur_v == end_v:
+            return list_v
+
+        # Add neighbors of current vertex to a new deque to visit (in ascending order)
+        v_deque = deque([])
+        for neighbor in range(self.v_count):                                                                                # for a vertex's neighbors
+            if self.adj_matrix[cur_v][neighbor] != 0 and neighbor not in list_v:                                                   # neighbor!=0 -> to be an actual neighbor, and not already visited
+                if not v_deque:                                                                                             # if deque is empty, append first neighbor found
+                    v_deque.append(neighbor)
+                else:                                                                                                       # if a neighbor already in the deque
+                    i = 0
+                    deque_len = len(v_deque)
+                    while i < deque_len:                                                                                    # Alphabetizing-while loop
+                        if neighbor < v_deque[i] and neighbor not in v_deque:                                               # go through deque to alphabetize neighbors (i.e. if current neighbor is less than/earlier than neighbor in deque, insert it before the deque-neighbor
+                            v_deque.insert(i, neighbor)
+                        i += 1
+                    if neighbor not in v_deque:                                                                             # if it reaches here, it's later/larger than all other neighbors in deque, so append it to the end
+                        v_deque.append(neighbor)
+
+        # Recursion to set next visited vertex as first neighbor in deque
+        while v_deque:                                                                                                      # while current deque of neighbors is not empty,
+            if end_v in list_v:
+                return list_v
+            current = v_deque.popleft()                                                                                     # pop out first(leftmost) neighbor to be visited next
+            self.rec_dfs(current, end_v, list_v )
+
+        return list_v
+
 
     def bfs(self, v_start, v_end=None) -> []:
         """
-        TODO: Write this implementation
+        Method that takes a starting vertex and ending vertex, and returns a list of vertices visited in the graph after
+        a breadth-first search traversal of the graph. Uses a recursive helper method to perform the breadth-first search
+        of the graph.
         """
-        pass
+        visited = []
+        if v_start <0 or v_start>self.v_count-1:
+            return visited
+        v_deque = deque([v_start])                                                                                          # deque to hold current level vertices, initialized with start vertex
+        visited.append(v_start)                                                                                             # add start vertex to visited list
+        self.rec_bfs(v_end, visited, v_deque)
+        return visited
+
+
+    def rec_bfs(self, end_vertex=None, list_v=None, cur_deque=None):
+        """
+        Recursive helper method for Breadth-First Search that examines current-level vertices from the current deque passed
+        to it and adds direct successor vertices from each vertex examined in a BFS manner
+        :param end_vertex: The vertex that signals the end of the BFS search. If none is provided, or if it doesn't exist
+                in the graph, the BFS continues until all vertices have been visited
+        :param list_v: the list of visited vertices
+        :param cur_deque: the deque of vertices to be processed for their direct successors
+        :return: list of visited vertices
+        """
+        # Check if end vertex is already in list
+        if end_vertex in list_v:
+            return list_v
+
+        # While the v_deque is not empty, pop from the front of the deque -> add successors to s_deque numerically ascending -> add successors in s_deque to visited list -> normal append vertices in s_deque to next_deque
+        s_deque = deque([])                                                                                                 # deque to add successors of current vertex (and added to visited list)
+        next_deque = deque([])                                                                                              # deque with successors that is passed back to method
+        while cur_deque:                                                                                                    # goes through all current level vertices
+            current = cur_deque.popleft()
+
+            # Add current level vertex's direct successors to s_deque if they've not been visited
+            for neighbor in range(self.v_count):
+                if self.adj_matrix[current][neighbor] != 0 and neighbor not in list_v and neighbor not in cur_deque:        # if next index shares an edge with current vertex(actually a neighbor), and not already visited or on current level to be visited
+                    if not s_deque:
+                        s_deque.append(neighbor)
+                    else:
+                        i=0
+                        deque_len = len(s_deque)
+                        while i < deque_len:                                                                                # ordering loop that adds successor vertices into s_deque in ascending order
+                            if neighbor < s_deque[i] and neighbor not in s_deque:
+                                s_deque.insert(i, neighbor)
+                            i +=1
+                        if neighbor not in s_deque:                                                                         # if it reaches here, vertex is later/larger than all other neighbors in deque, so append it to the end
+                            s_deque.append(neighbor)
+
+            # For each element in s_deque (current level vertex's direct successors), if not visited yet, add to visited list
+            for vertex in s_deque:
+                if vertex not in list_v:
+                    list_v.append(vertex)
+                if vertex == end_vertex:  # if end vertex found, return visited list
+                    return list_v
+
+            # Append normally current vertex's direct successors to next_deque(eventually passed back recursively
+            for vertex in s_deque:
+                next_deque.append(vertex)
+
+        # if deque for successors has vertices, pass it back to method recursively
+        if next_deque:
+            self.rec_bfs(end_vertex, list_v, next_deque)
+        return list_v                                                                                                       # if reached here, while loop for current deque has finished and successor deque is empty.
+
 
     def has_cycle(self):
         """
@@ -150,11 +265,16 @@ class DirectedGraph:
         """
         pass
 
+
     def dijkstra(self, src: int) -> []:
         """
-        TODO: Write this implementation
+        Method that takes a starting vertex and calculates the shortest path length from that vertex to all other vertices
+        in the graph. It returns a list containing the shortest path found (smallest sum of edges) between the source vertex
+        to the destination vertex.
         """
-        pass
+        shortest_path = []
+
+
 
 
 if __name__ == '__main__':
