@@ -294,7 +294,8 @@ class UndirectedGraph:
 
     def has_cycle(self)-> bool:
         """
-        Method that returns True if the graph contains at least one cycle, and False otherwise.
+        Method that returns True if the graph contains at least one cycle, and False otherwise. It uses a recursive helper method
+        to do a DFS traversal on the graph to check for cycles.
         """
         for key in self.adj_list:                                                                                           # checks all vertices
 
