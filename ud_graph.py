@@ -210,6 +210,7 @@ class UndirectedGraph:
         if v_start not in self.adj_list:
             return v_visited
         v_deque = deque([v_start])                                                                                          # deque to hold current level vertices, initialized with start vertex
+        v_visited.append(v_start)                                                                                           # add start vertex to visited list
         self.rec_bfs(v_end, v_visited,v_deque)
         return v_visited
 
@@ -217,22 +218,17 @@ class UndirectedGraph:
 
     def rec_bfs(self, end_vertex=None, list_v=None, cur_deque=None):
         """
-        Method that
-        :param end_vertex:
-        :param list_v:
-        :param cur_deque:
-        :return:
+        Recursive helper method for Breadth-First Search that examines current-level vertices from the current deque passed
+        to it and adds direct successor vertices from each vertex examined in a BFS manner
+        :param end_vertex: The vertex that signals the end of the BFS search. If none is provided, or if it doesn't exist
+                in the graph, the BFS continues until all vertices have been visited
+        :param list_v: the list of visited vertices
+        :param cur_deque: the deque of vertices to be processed for their direct successors
+        :return: list of visited vertices
         """
         # Check if end vertex is already in list
         if end_vertex in list_v:
             return list_v
-
-        # For each element in current level vertices deque, if not visited yet, add to visited list
-        for vertex in cur_deque:
-            if vertex not in list_v:
-                list_v.append(vertex)
-            if vertex == end_vertex:                                                                                        # if end vertex found, return visited list
-                return list_v
 
         # While the v_deque is not empty, pop from the front of the deque (passed in already alphabetized) and add its successors alphabetically to next_deque
         s_deque = deque([])
@@ -254,9 +250,19 @@ class UndirectedGraph:
                         if neighbor not in s_deque:                                                                         # if it reaches here, vertex is later/larger than all other neighbors in deque, so append it to the end
                             s_deque.append(neighbor)
 
-            if s_deque:                                                                                                     # if deque for successors has vertices, pass it back to method recursively
-                self.rec_bfs(end_vertex, list_v, s_deque)                                                                   # pass current vertex's next level nodes back to function to be visited before next vertex at current level's neighbors are added
+            # For each element in s_deque (current level vertex's direct successors), if not visited yet, add to visited list
+            for vertex in s_deque:
+                if vertex not in list_v:
+                    list_v.append(vertex)
+                if vertex == end_vertex:  # if end vertex found, return visited list
+                    return list_v
+
+        # if deque for successors has vertices, pass it back to method recursively
+        if s_deque:
+            self.rec_bfs(end_vertex, list_v, s_deque)
         return list_v                                                                                                       # if reached here, while loop for current deque has finished and successor deque is empty.
+
+
 
     def count_connected_components(self):
         """
@@ -319,17 +325,23 @@ if __name__ == '__main__':
     #    print(list(path), g.is_valid_path(list(path)))
 
 
-    print("\nPDF - method dfs() and bfs() example 1")
-    print("--------------------------------------")
-    edges = ['AE', 'AC', 'BE', 'CE', 'CD', 'CB', 'BD', 'ED', 'BH', 'QG', 'FG']
-    g = UndirectedGraph(edges)
-    test_cases = 'ABCDEGH'
-    for case in test_cases:
-        print(f'{case} DFS:{g.dfs(case)} BFS:{g.bfs(case)}')
-    print('-----')
-    for i in range(1, len(test_cases)):
-        v1, v2 = test_cases[i], test_cases[-1 - i]
-        print(f'{v1}-{v2} DFS:{g.dfs(v1, v2)} BFS:{g.bfs(v1, v2)}')
+    #print("\nPDF - method dfs() and bfs() example 1")
+    #print("--------------------------------------")
+    #edges = ['AE', 'AC', 'BE', 'CE', 'CD', 'CB', 'BD', 'ED', 'BH', 'QG', 'FG']
+    #g = UndirectedGraph(edges)
+    #test_cases = 'ABCDEGH'
+    #for case in test_cases:
+    #    print(f'{case} DFS:{g.dfs(case)} BFS:{g.bfs(case)}')
+    #print('-----')
+    #for i in range(1, len(test_cases)):
+    #    v1, v2 = test_cases[i], test_cases[-1 - i]
+    #    print(f'{v1}-{v2} DFS:{g.dfs(v1, v2)} BFS:{g.bfs(v1, v2)}')
+
+    #print("\nGradescope Random Values test#1")
+    #print("--------------------------------------")
+    #edges2 = ['JB', 'JC', 'BF', 'BI', 'CE', 'IG']
+    #test_graph = UndirectedGraph(edges2)
+    #print(test_graph.bfs('J'))
 
 
     #print("\nPDF - method count_connected_components() example 1")
