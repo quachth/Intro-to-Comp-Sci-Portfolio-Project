@@ -259,11 +259,41 @@ class DirectedGraph:
         return list_v                                                                                                       # if reached here, while loop for current deque has finished and successor deque is empty.
 
 
-    def has_cycle(self):
+    def has_cycle(self)-> bool:
         """
-        TODO: Write this implementation
+        Method that returns True if the graph contains at least one cycle, and False otherwise. It uses a recursive helper method
+        to do a regular DFS traversal on the graph to check for cycles.
         """
-        pass
+        for vertex in range(len(self.adj_matrix)):                                                                                      # checks all vertices
+
+            # Initialize visited dictionary -> each key is vertex, initialized to False (unvisited)
+            visited = {vertex: False for vertex in range(len(self.adj_matrix))}                                             # Must be initialized within for loop for each component looked at. Otherwise would retain 'True' value from previous components
+            parent = None                                                                                                   # initialize parent variable to None within for loop
+            if self.dfs_cycle(vertex, parent, visited) == True:                                                             # if the dfs traversal returns True, cycle is found, so return True
+                return True
+        return False                                                                                                        # all vertices have been checked without returning True, so no cycle exists (False)
+
+
+    def dfs_cycle(self, cur_v=None, parent_v = None, list_v = None):
+        """
+        Recursive helper method that does a regular dfs search on the list while keeping track of the current parent node. Extra condition
+        involving neighbor-parent vertices comparison used to detect cycle in graph
+        :param cur_v: current vertex being visited (starts at vertex passed by calling method)
+        :param parent_v: initially None, becomes current vertex on subsequent recursive call when passing back a neighbor/adjacent vertex
+        :param list_v: dictionary of vertices whose values equal True if they've been visited and False if unvisited; a vertex
+                resets to false during call if path has to be rewound (to try a different directed path)
+        :return: True if a cycle is found (if a neighboring vertex is already visited but the neighbor of the current vertex isn't its parent
+        """
+        list_v[cur_v] = True                                                                                                # mark the current vertex as having been visited (True)
+        for neighbor in range(len(self.adj_matrix[cur_v])):
+            if self.adj_matrix[cur_v][neighbor] != 0 and list_v[neighbor] == False:                                         # if the neighbor is an actual neighbor (edge weight not 0) and unvisited, visit the neighbor recursively (dfs traversal),
+                cycle = self.dfs_cycle(neighbor, cur_v, list_v)                                                             # using neighbor as new current vertex, current vertex as parent, and the visited dict
+                if cycle == True:
+                    return True
+            elif self.adj_matrix[cur_v][neighbor] != 0 and neighbor != parent_v:                                            # if the neighbor has been visited, and the neighbor is not the parent of the current vertex, cycle found
+                return True
+        list_v[cur_v] = False                                                                                               # if the recursive call returns false(no cycle found on current directed path), reset the visited vertex to False (resetting graph for different path)
+        return False
 
 
     def dijkstra(self, src: int) -> []:

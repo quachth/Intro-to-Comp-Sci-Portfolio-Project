@@ -295,22 +295,22 @@ class UndirectedGraph:
     def has_cycle(self)-> bool:
         """
         Method that returns True if the graph contains at least one cycle, and False otherwise. It uses a recursive helper method
-        to do a DFS traversal on the graph to check for cycles.
+        to do a regular (non-alphabetical) DFS traversal on the graph to check for cycles.
         """
-        for key in self.adj_list:                                                                                           # checks all vertices
+        for vertex in self.adj_list:                                                                                           # checks all vertices
 
             # Initialize visited dictionary -> each key is vertex, initialized to False (unvisited)
-            visited = {key: False for key in self.adj_list}                                                                 # Must be initialized within for loop for each component looked at. Otherwise would retain 'True' value from previous components
+            visited = {vertex: False for vertex in self.adj_list}                                                                 # Must be initialized within for loop for each component looked at. Otherwise would retain 'True' value from previous components
             parent = None                                                                                                   # initialize parent variable to None within for loop
-            if self.dfs_cycle(key, parent, visited) == True:                                                                # if the dfs traversal returns True, cycle is found, so return True
+            if self.dfs_cycle(vertex, parent, visited) == True:                                                                # if the dfs traversal returns True, cycle is found, so return True
                 return True
         return False                                                                                                        # all vertices have been checked without returning True, so no cycle exists (False)
 
 
     def dfs_cycle(self, cur_v=None, parent_v = None, list_v = None):
         """
-        Recursive helper method that does a dfs search on the list while keeping track of the current parent node so back
-        edges aren't counted.
+        Recursive helper method that does a regular dfs search on the list while keeping track of the current parent node. Extra condition
+        involving neighbor-parent vertices comparison used to detect cycle in graph
         :param cur_v: current vertex being visited (starts at vertex passed by calling method)
         :param parent_v: initially None, becomes current vertex on subsequent recursive call when passing back a neighbor/adjacent vertex
         :param list_v: dictionary of vertices whose values equal True if they've been visited and False if unvisited
