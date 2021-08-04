@@ -232,6 +232,7 @@ class UndirectedGraph:
 
         # While the v_deque is not empty, pop from the front of the deque (passed in already alphabetized) and add its successors alphabetically to next_deque
         s_deque = deque([])
+        next_deque = deque([])
         while cur_deque:                                                                                                    # goes through all current level vertices
             current = cur_deque.popleft()
 
@@ -257,9 +258,13 @@ class UndirectedGraph:
                 if vertex == end_vertex:  # if end vertex found, return visited list
                     return list_v
 
+            # Append normally current vertex's direct successors to next_deque(eventually passed back recursively
+            for vertex in s_deque:
+                next_deque.append(vertex)
+
         # if deque for successors has vertices, pass it back to method recursively
-        if s_deque:
-            self.rec_bfs(end_vertex, list_v, s_deque)
+        if next_deque:
+            self.rec_bfs(end_vertex, list_v, next_deque)
         return list_v                                                                                                       # if reached here, while loop for current deque has finished and successor deque is empty.
 
 
@@ -326,23 +331,31 @@ if __name__ == '__main__':
     #    print(list(path), g.is_valid_path(list(path)))
 
 
-    #print("\nPDF - method dfs() and bfs() example 1")
-    #print("--------------------------------------")
-    #edges = ['AE', 'AC', 'BE', 'CE', 'CD', 'CB', 'BD', 'ED', 'BH', 'QG', 'FG']
-    #g = UndirectedGraph(edges)
-    #test_cases = 'ABCDEGH'
-    #for case in test_cases:
-    #    print(f'{case} DFS:{g.dfs(case)} BFS:{g.bfs(case)}')
-    #print('-----')
-    #for i in range(1, len(test_cases)):
-    #    v1, v2 = test_cases[i], test_cases[-1 - i]
-    #    print(f'{v1}-{v2} DFS:{g.dfs(v1, v2)} BFS:{g.bfs(v1, v2)}')
+    print("\nPDF - method dfs() and bfs() example 1")
+    print("--------------------------------------")
+    edges = ['AE', 'AC', 'BE', 'CE', 'CD', 'CB', 'BD', 'ED', 'BH', 'QG', 'FG']
+    g = UndirectedGraph(edges)
+    test_cases = 'ABCDEGH'
+    for case in test_cases:
+        print(f'{case} DFS:{g.dfs(case)} BFS:{g.bfs(case)}')
+    print('-----')
+    for i in range(1, len(test_cases)):
+        v1, v2 = test_cases[i], test_cases[-1 - i]
+        print(f'{v1}-{v2} DFS:{g.dfs(v1, v2)} BFS:{g.bfs(v1, v2)}')
 
     #print("\nGradescope Random Values test#1")
     #print("--------------------------------------")
-    #edges2 = ['JB', 'JC', 'BF', 'BI', 'CE', 'IG']
+    #edges2 = []
     #test_graph = UndirectedGraph(edges2)
     #print(test_graph.bfs('J'))
+
+    print("\nGradescope Random Values test#2")
+    print("--------------------------------------")
+    edges3 = ['GB', 'GI', 'BK', 'KF', 'HI', 'HA','HE']
+    test_graph2 = UndirectedGraph(edges3)
+    print(test_graph2.bfs('G'))
+
+
 
 
     #print("\nPDF - method count_connected_components() example 1")
