@@ -280,6 +280,7 @@ class UndirectedGraph:
 
 
 if __name__ == '__main__':
+    pass
 
     #print("\nPDF - method add_vertex() / add_edge example 1")
     #print("----------------------------------------------")
