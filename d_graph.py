@@ -1,7 +1,7 @@
 # Course: CS261 - Data Structures
 # Author: Theresa Quach
 # Assignment:   #6 Directed Graph Implementation
-# Description:
+# Description: Implementation of an directed graph using an adjacency matrix to store the vertices and edges of the graph
 
 class DirectedGraph:
     """
@@ -52,39 +52,85 @@ class DirectedGraph:
 
     def add_vertex(self) -> int:
         """
-        TODO: Write this implementation
+        Method that adds a new vertex to the graph, starting from integer index 0 and increasing upward. The method
+        returns an integer representing the number of vertices in the graph after the addition.
         """
-        pass
+        self.v_count += 1                                                                                                   # increment number of vertices in matrix
+        new_vertex = [0 for x in range(self.v_count)]                                                                       # create new list(row) for new vertex with edges to other vertices in matrix initialized to 0
+        self.adj_matrix.append(new_vertex)                                                                                  # add new row to matrix
+        for row in range(self.v_count-1):                                                                                   # go to previous rows
+            self.adj_matrix[row].append(0)                                                                                  # add another column in each row for new vertex, initialized to 0
+        return self.v_count
+
 
     def add_edge(self, src: int, dst: int, weight=1) -> None:
         """
-        TODO: Write this implementation
+        Method that takes as parameters a source vertex, a destination vertex, and a weight (integer) that represents the edge
+        between those two vertices, in the direction given. If either (or both) vertices do not exist in the graph, if the weight
+        is not a positive integer, or if src and dst are the same vertex, method does nothing.
+        If an edge already exists in the graph, the edge is updated with the new weight.
+
         """
-        pass
+
+        if src == dst:
+            return
+        if src > self.v_count-1:                                                                                            # self.v_count-1 for 0-indexing
+            return
+        if dst > self.v_count-1:
+            return
+        if weight < 0:
+            return
+        self.adj_matrix[src][dst] = weight
+
 
     def remove_edge(self, src: int, dst: int) -> None:
         """
-        TODO: Write this implementation
+        Method that takes a source vertex and a destination vertex and removes the edge between them (resets to 0). If either
+        the source or destination vertices don't exist, or if there is no edge between them, nothing happens.
         """
-        pass
+        if src > self.v_count-1:
+            return
+        if dst > self.v_count-1:
+            return
+        self.adj_matrix[src][dst] = 0                                                                                       # reset edge to 0 to remove (if no edge exists, still 0)
+
 
     def get_vertices(self) -> []:
         """
-        TODO: Write this implementation
+        Method that returns a list of the vertices in the graph (named by their index number).
         """
-        pass
+        vertices = []
+        for vertex in range(self.v_count):
+            vertices.append(vertex)
+        return vertices
+
 
     def get_edges(self) -> []:
         """
-        TODO: Write this implementation
+        Method that returns a list of edges from the graph. Each edge is represented as a tuple of the source and destination
+        vertices, and then the weight of the edge between them. 0 means no edge exists between the two vertices. Order of
+        the edges in the list does not matter.
         """
-        pass
+        edges = []
+        for src in range(self.v_count):
+            for dst in range(self.v_count):
+                if self.adj_matrix[src][dst] != 0:
+                    edges.append((src, dst, self.adj_matrix[src][dst]))
+        return edges
 
     def is_valid_path(self, path: []) -> bool:
         """
-        TODO: Write this implementation
+        Method that takes as a parameter a path (which is a list of vertex indices) and returns True if the vertices sequence
+        given represents a valid path in the graph (there is a direct edge leading from one to the next until the last vertex
+        in the sequence). An empty path is considered valid. Otherwise, it returns False.
         """
-        pass
+        if not path:                                                                                                        # if path is empty
+            return True
+        for i in range(len(path)-1):                                                                                        # iterate through path with i as source and i+1 as destination (because using i+1, need to set range as length of path -1)
+            if self.adj_matrix[path[i]][path[i+1]] == 0:                                                                               # if there is a 0 (nonexisting) edge between source and destination vertices, return False
+                return False
+        return True                                                                                                         # if loop exists without returning False, is valid path
+
 
     def dfs(self, v_start, v_end=None) -> []:
         """
