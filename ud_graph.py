@@ -210,13 +210,12 @@ class UndirectedGraph:
         if v_start not in self.adj_list:
             return v_visited
         v_deque = deque([v_start])                                                                                          # deque to hold current level vertices, initialized with start vertex
-        s_deque = deque([])                                                                                                 # deque to hold next level vertices
-        self.rec_bfs(v_end, v_visited,v_deque, s_deque)
+        self.rec_bfs(v_end, v_visited,v_deque)
         return v_visited
 
 
 
-    def rec_bfs(self, end_vertex=None, list_v=None, cur_deque=None, next_deque=None):
+    def rec_bfs(self, end_vertex=None, list_v=None, cur_deque=None):
         """
         Method that
         :param end_vertex:
@@ -228,45 +227,36 @@ class UndirectedGraph:
         if end_vertex in list_v:
             return list_v
 
-        # While the v_deque is not empty, pop from the front of the deque (passed in already alphabetized) and add its neighbors alphabetically to s_deque
-        while cur_deque:                                                                                                      # goes through all current level vertices
-            current = cur_deque.popleft()
-
-            # Append the new vertex to list of vertices visited
-            if current not in list_v:
-                list_v.append(current)
-
-            # If newly added vertex is the end vertex, add to list and then return
-            if current == end_vertex:
+        # For each element in current level vertices deque, if not visited yet, add to visited list
+        for vertex in cur_deque:
+            if vertex not in list_v:
+                list_v.append(vertex)
+            if vertex == end_vertex:                                                                                        # if end vertex found, return visited list
                 return list_v
+
+        # While the v_deque is not empty, pop from the front of the deque (passed in already alphabetized) and add its successors alphabetically to next_deque
+        s_deque = deque([])
+        while cur_deque:                                                                                                    # goes through all current level vertices
+            current = cur_deque.popleft()
 
             # Add current level vertex's direct successors to s_deque if they've not been visited
             for neighbor in self.adj_list[current]:
                 if neighbor not in list_v and neighbor not in cur_deque:
-                    if not next_deque:
-                        next_deque.append(neighbor)
+                    if not s_deque:
+                        s_deque.append(neighbor)
                     else:
                         i=0
-                        deque_len = len(next_deque)
+                        deque_len = len(s_deque)
                         while i < deque_len:                                                                                # alphabetizing loop that adds successor vertices into s_deque
-                            if neighbor < next_deque[i] and neighbor not in next_deque:
-                                next_deque.insert(i, neighbor)
+                            if neighbor < s_deque[i] and neighbor not in s_deque:
+                                s_deque.insert(i, neighbor)
                             i +=1
-                        if neighbor not in next_deque:                                                                      # if it reaches here, vertex is later/larger than all other neighbors in deque, so append it to the end
-                            next_deque.append(neighbor)
+                        if neighbor not in s_deque:                                                                         # if it reaches here, vertex is later/larger than all other neighbors in deque, so append it to the end
+                            s_deque.append(neighbor)
 
-        # All current level vertices have been visited -> add from next_deque back to cur_deque
-        for neighbor in next_deque:
-            cur_deque.append(neighbor)
-        next_deque.clear()                                                                                                  # clear next_deque for next set of neighbors
-
-        # if cur_deque is empty, return visited list (all vertices visited without hitting end vertex)
-        if not cur_deque:
-            return list_v
-
-        # Pass s_deque recursively back onto method as v_deque; new s_deque initialized for next set of neighbors
-        self.rec_bfs(end_vertex, list_v, cur_deque, next_deque)
-        return list_v
+            if s_deque:                                                                                                     # if deque for successors has vertices, pass it back to method recursively
+                self.rec_bfs(end_vertex, list_v, s_deque)                                                                   # pass current vertex's next level nodes back to function to be visited before next vertex at current level's neighbors are added
+        return list_v                                                                                                       # if reached here, while loop for current deque has finished and successor deque is empty.
 
     def count_connected_components(self):
         """
@@ -334,9 +324,9 @@ if __name__ == '__main__':
     edges = ['AE', 'AC', 'BE', 'CE', 'CD', 'CB', 'BD', 'ED', 'BH', 'QG', 'FG']
     g = UndirectedGraph(edges)
     test_cases = 'ABCDEGH'
-    #for case in test_cases:
-    #    print(f'{case} DFS:{g.dfs(case)} BFS:{g.bfs(case)}')
-    #print('-----')
+    for case in test_cases:
+        print(f'{case} DFS:{g.dfs(case)} BFS:{g.bfs(case)}')
+    print('-----')
     for i in range(1, len(test_cases)):
         v1, v2 = test_cases[i], test_cases[-1 - i]
         print(f'{v1}-{v2} DFS:{g.dfs(v1, v2)} BFS:{g.bfs(v1, v2)}')
