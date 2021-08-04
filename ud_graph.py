@@ -198,7 +198,7 @@ class UndirectedGraph:
         return list_v
 
 
-       
+
     def bfs(self, v_start=None, v_end=None) -> []:
         """
         Method that takes a start vertex and and end vertex and returns a list of vertices visited during BFS search. Vertices
@@ -294,8 +294,37 @@ class UndirectedGraph:
 
     def has_cycle(self)-> bool:
         """
-        Method that returns True if the graph contains at least one cycle, and False otherwise
+        Method that returns True if the graph contains at least one cycle, and False otherwise.
         """
+        for key in self.adj_list:                                                                                           # checks all vertices
+
+            # Initialize visited dictionary -> each key is vertex, initialized to False (unvisited)
+            visited = {key: False for key in self.adj_list}                                                                 # Must be initialized within for loop for each component looked at. Otherwise would retain 'True' value from previous components
+            parent = None                                                                                                   # initialize parent variable to None within for loop
+            if self.dfs_cycle(key, parent, visited) == True:                                                                # if the dfs traversal returns True, cycle is found, so return True
+                return True
+        return False                                                                                                        # all vertices have been checked without returning True, so no cycle exists (False)
+
+
+    def dfs_cycle(self, cur_v=None, parent_v = None, list_v = None):
+        """
+        Recursive helper method that does a dfs search on the list while keeping track of the current parent node so back
+        edges aren't counted.
+        :param cur_v: current vertex being visited (starts at vertex passed by calling method)
+        :param parent_v: initially None, becomes current vertex on subsequent recursive call when passing back a neighbor/adjacent vertex
+        :param list_v: dictionary of vertices whose values equal True if they've been visited and False if unvisited
+        :return: True if a cycle is found (if a neighboring vertex is already visited but the neighbor of the current vertex isn't its parent
+        """
+        list_v[cur_v] = True                                                                                                # mark the current vertex as having been visited (True)
+        for neighbor in self.adj_list[cur_v]:                                                                               # for the neighbors of this current vertex
+            if list_v[neighbor] == False:                                                                                   # if the neighbor is unvisited, visit the neighbor recursively (dfs traversal),
+                cycle = self.dfs_cycle(neighbor, cur_v, list_v)                                                             # using neighbor as new current vertex, current vertex as parent, and the visited dict
+                if cycle == True:
+                    return True
+            else:
+                if neighbor != parent_v:                                                                                    # if the neighbor has been visited, and the neighbor is not the parent of the current vertex, cycle found
+                    return True
+        return False
 
 
 
@@ -333,12 +362,12 @@ if __name__ == '__main__':
     #print(g)
 
 
-    print("\nPDF - method get_vertices() / get_edges() example 1")
-    print("---------------------------------------------------")
-    g = UndirectedGraph()
-    print(g.get_edges(), g.get_vertices(), sep='\n')
-    g = UndirectedGraph(['AB', 'AC', 'BC', 'BD', 'CD', 'CE'])
-    print(g.get_edges(), g.get_vertices(), sep='\n')
+    #print("\nPDF - method get_vertices() / get_edges() example 1")
+    #print("---------------------------------------------------")
+    #g = UndirectedGraph()
+    #print(g.get_edges(), g.get_vertices(), sep='\n')
+    #g = UndirectedGraph(['AB', 'AC', 'BC', 'BD', 'CD', 'CE'])
+    #print(g.get_edges(), g.get_vertices(), sep='\n')
 
 
     #print("\nPDF - method is_valid_path() example 1")
