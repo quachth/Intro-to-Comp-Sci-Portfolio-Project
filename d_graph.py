@@ -272,7 +272,7 @@ class DirectedGraph:
         in the graph. It returns a list containing the shortest path found (smallest sum of edges) between the source vertex
         to the destination vertex.
         """
-        visited = ['inf' for x in range(self.v_count)]
+        visited = [float('inf') for x in range(self.v_count)]
         visited[src] = 0
         pq = []
         heapq.heappush(pq,(0, src))
