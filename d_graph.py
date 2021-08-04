@@ -268,19 +268,16 @@ class DirectedGraph:
 
             # Initialize visited dictionary -> each key is vertex, initialized to False (unvisited)
             visited = {vertex: False for vertex in range(len(self.adj_matrix))}                                             # Must be initialized within for loop for each component looked at. Otherwise would retain 'True' value from previous components
-            parent = None                                                                                                   # initialize parent variable to None within for loop
-            prev_parent = None
-            if self.dfs_cycle(vertex, parent, prev_parent, visited) == True:                                                # if the dfs traversal returns True, cycle is found, so return True
+            if self.dfs_cycle(vertex, visited) == True:                                                                     # if the dfs traversal returns True, cycle is found, so return True
                 return True
         return False                                                                                                        # all vertices have been checked without returning True, so no cycle exists (False)
 
 
-    def dfs_cycle(self, cur_v=None, parent_v=None, prev_par=None, list_v = None):
+    def dfs_cycle(self, cur_v=None, list_v = None):
         """
-        Recursive helper method that does a regular dfs search on the list while keeping track of the current parent node. Extra condition
-        involving neighbor-parent vertices comparison used to detect cycle in graph
+        Recursive helper method that does a regular dfs search on the list. No need to keep track of parent vertex as if there is a
+        directed edge from child back to parent, that is considered a loop.
         :param cur_v: current vertex being visited (starts at vertex passed by calling method)
-        :param parent_v: initially None, becomes current vertex on subsequent recursive call when passing back a neighbor/adjacent vertex
         :param list_v: dictionary of vertices whose values equal True if they've been visited and False if unvisited; a vertex
                 resets to false during call if path has to be rewound (to try a different directed path)
         :return: True if a cycle is found (if a neighboring vertex is already visited but the neighbor of the current vertex isn't its parent
@@ -288,13 +285,10 @@ class DirectedGraph:
         list_v[cur_v] = True                                                                                                # mark the current vertex as having been visited (True)
         for neighbor in range(len(self.adj_matrix[cur_v])):
             if self.adj_matrix[cur_v][neighbor] != 0 and list_v[neighbor] == False:                                         # if the neighbor is an actual neighbor (edge weight not 0) and unvisited, visit the neighbor recursively (dfs traversal),
-                prev_par = parent_v
-                cycle = self.dfs_cycle(neighbor, cur_v, parent_v, list_v)                                                   # using neighbor as new current vertex, current vertex as parent, and the visited dict
-                if cycle == True:
+                cycle = self.dfs_cycle(neighbor, list_v)                                                                    # using neighbor as new current vertex, and passing visited list
+                if cycle == True:                                                                                           # if previous call returned true, return True
                     return True
-                else:
-                    parent_v = prev_par                                                                                     # if the recursive call returned false, reset the current parent to previous parent
-            elif self.adj_matrix[cur_v][neighbor] != 0 and neighbor != parent_v:                                            # if the neighbor has been visited, and the neighbor is not the parent of the current vertex, cycle found
+            elif self.adj_matrix[cur_v][neighbor] != 0:                                                                     # if the neighbor has been visited and there is a directed edge (non-zero value) leading back to the previous node, considered a cycle -> return True
                 return True
         list_v[cur_v] = False                                                                                               # if the recursive call returns false(no cycle found on current directed path), reset the visited vertex to False (resetting graph for different path)
         return False
@@ -418,7 +412,7 @@ if __name__ == '__main__':
     test = new.dijkstra(11)
     print(test)
 
-    print("\nPDF - method has_cycle() gradescop example 1")
+    print("\nPDF - method has_cycle() gradescope example 1")
     print("----------------------------------")
     edges = [(1, 6, 6), (2, 8, 3), (2, 12, 5), (3, 1, 5),
              (3, 12, 6), (5, 4, 3), (5, 8, 1), (7, 2, 13),
