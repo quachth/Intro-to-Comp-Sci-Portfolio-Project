@@ -111,13 +111,13 @@ class UndirectedGraph:
 
     def get_edges(self) -> []:
         """
-        Return list of edges in the graph (any order)
+        Method that returns a list of edges in the graph (any order) as a tuple of the two vertices making that edge
         """
         e_list = []
         for vertex in self.adj_list:                                                                                        # for each key in the graph dictionary
             for neighbor in self.adj_list[vertex]:                                                                          # iterate through its edges
-                edge = vertex + neighbor                                                                                    # concatenate key string and value string to get edge name
-                reverse_edge = neighbor + vertex                                                                            # reverse_edge is the same edge with the strings backwards
+                edge = (vertex, neighbor)                                                                                   # create edge tuple
+                reverse_edge = (neighbor, vertex)                                                                           # reverse_edge is the same edge with the strings backwards
                 if edge not in e_list and reverse_edge not in e_list:                                                       # if neither has been added to the edge list, add it
                     e_list.append(edge)
         return e_list
@@ -333,12 +333,12 @@ if __name__ == '__main__':
     #print(g)
 
 
-    #print("\nPDF - method get_vertices() / get_edges() example 1")
-    #print("---------------------------------------------------")
-    #g = UndirectedGraph()
-    #print(g.get_edges(), g.get_vertices(), sep='\n')
-    #g = UndirectedGraph(['AB', 'AC', 'BC', 'BD', 'CD', 'CE'])
-    #print(g.get_edges(), g.get_vertices(), sep='\n')
+    print("\nPDF - method get_vertices() / get_edges() example 1")
+    print("---------------------------------------------------")
+    g = UndirectedGraph()
+    print(g.get_edges(), g.get_vertices(), sep='\n')
+    g = UndirectedGraph(['AB', 'AC', 'BC', 'BD', 'CD', 'CE'])
+    print(g.get_edges(), g.get_vertices(), sep='\n')
 
 
     #print("\nPDF - method is_valid_path() example 1")
