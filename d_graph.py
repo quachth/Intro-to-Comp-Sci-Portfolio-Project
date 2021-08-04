@@ -279,19 +279,15 @@ class DirectedGraph:
         while pq:
             current = heapq.heappop(pq)                                                                                     # front vertex of priority queue
             v = current[1]
-            d = current[0]                                                                                                  # distance of vertex
-            if v not in visited:
+            d = current[0]                                                                                                  # distance travelled so far to current vertex
+            if visited[v] == float('inf'):                                                                                  # if the current vertex hasn't been travelled to yet, add distance travelled to it to visited array
                 visited[v] = d
-            if d <= visited[v]:
+            if d <= visited[v]:                                                                                             # else if the vertex has been travelled to, but the distance travelled already is less than distance recorded for the current vertex
                 for n in range(self.v_count):                                                                               # for all vertices in graph
                     n_d = self.adj_matrix[v][n]                                                                             # n_d is distance from current vertex to n (neighboring) vertex
-                    if n_d!= 0:                                                                                             # if n is actually neighbor of v (n_d not zero)
-                        if visited[n] == 'inf':
-                            visited[n] = d+n_d
-                            heapq.heappush(pq, (d + n_d, n))                                                                # push (neighbor, total distance) to priority queue, where total distance = distance travelled so far + distance from current vertex to neighbor)
-                        elif d+n_d < visited[n]:
-                            visited[n] = d+n_d
-                            heapq.heappush(pq, (d + n_d, n))
+                    if n_d!= 0 and d+n_d < visited[n]:                                                                      # if n is actually neighbor of v (n_d not zero), and the total distance travelled to n (calculated by adding current edge n_d to total distance so far d)                                                              # push (neighbor, total distance) to priority queue, where total distance = distance travelled so far + distance from current vertex to neighbor)
+                        visited[n] = d+n_d                                                                                  # adjust the value of the neighbor in visited array and,
+                        heapq.heappush(pq, (d + n_d, n))                                                                    # push that neighbor with new smaller distance to priority queue
         return visited
 
 
@@ -374,3 +370,16 @@ if __name__ == '__main__':
     print('\n', g)
     for i in range(5):
         print(f'DIJKSTRA {i} {g.dijkstra(i)}')
+
+
+    print("\nPDF - dijkstra() gradescope example 1")
+    print("--------------------------")
+    new = DirectedGraph()
+    for _ in range(12):
+        new.add_vertex()
+    edges = [(2,1,19), (2,9,8), (8,1,13), (8,2,18), (9,4,2), (10,7,4), (10,9,6), (11,0,11), (11,9,11), (11,10,4)]
+    for src, dst, weight in edges:
+        new.add_edge(src, dst, weight)
+    print (new)
+    test = new.dijkstra(11)
+    print(test)
