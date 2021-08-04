@@ -74,9 +74,9 @@ class DirectedGraph:
 
         if src == dst:
             return
-        if src > self.v_count-1:                                                                                            # self.v_count-1 for 0-indexing
+        if src > self.v_count-1 or src < 0:                                                                                            # self.v_count-1 for 0-indexing
             return
-        if dst > self.v_count-1:
+        if dst > self.v_count-1 or dst < 0:
             return
         if weight < 0:
             return
@@ -88,9 +88,9 @@ class DirectedGraph:
         Method that takes a source vertex and a destination vertex and removes the edge between them (resets to 0). If either
         the source or destination vertices don't exist, or if there is no edge between them, nothing happens.
         """
-        if src > self.v_count-1:
+        if src > self.v_count-1 or src < 0:
             return
-        if dst > self.v_count-1:
+        if dst > self.v_count-1 or dst < 0:
             return
         self.adj_matrix[src][dst] = 0                                                                                       # reset edge to 0 to remove (if no edge exists, still 0)
 
