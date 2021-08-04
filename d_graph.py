@@ -289,11 +289,11 @@ class DirectedGraph:
         for neighbor in range(len(self.adj_matrix[cur_v])):
             if self.adj_matrix[cur_v][neighbor] != 0 and list_v[neighbor] == False:                                         # if the neighbor is an actual neighbor (edge weight not 0) and unvisited, visit the neighbor recursively (dfs traversal),
                 prev_par = parent_v
-                cycle = self.dfs_cycle(neighbor, cur_v, parent_v, list_v)                                                             # using neighbor as new current vertex, current vertex as parent, and the visited dict
+                cycle = self.dfs_cycle(neighbor, cur_v, parent_v, list_v)                                                   # using neighbor as new current vertex, current vertex as parent, and the visited dict
                 if cycle == True:
                     return True
                 else:
-                    parent_v = prev_par
+                    parent_v = prev_par                                                                                     # if the recursive call returned false, reset the current parent to previous parent
             elif self.adj_matrix[cur_v][neighbor] != 0 and neighbor != parent_v:                                            # if the neighbor has been visited, and the neighbor is not the parent of the current vertex, cycle found
                 return True
         list_v[cur_v] = False                                                                                               # if the recursive call returns false(no cycle found on current directed path), reset the visited vertex to False (resetting graph for different path)
