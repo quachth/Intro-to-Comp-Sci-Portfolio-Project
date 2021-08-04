@@ -264,17 +264,18 @@ class DirectedGraph:
         Method that returns True if the graph contains at least one cycle, and False otherwise. It uses a recursive helper method
         to do a regular DFS traversal on the graph to check for cycles.
         """
-        for vertex in range(len(self.adj_matrix)):                                                                                      # checks all vertices
+        for vertex in range(len(self.adj_matrix)):                                                                          # checks all vertices
 
             # Initialize visited dictionary -> each key is vertex, initialized to False (unvisited)
             visited = {vertex: False for vertex in range(len(self.adj_matrix))}                                             # Must be initialized within for loop for each component looked at. Otherwise would retain 'True' value from previous components
             parent = None                                                                                                   # initialize parent variable to None within for loop
-            if self.dfs_cycle(vertex, parent, visited) == True:                                                             # if the dfs traversal returns True, cycle is found, so return True
+            prev_parent = None
+            if self.dfs_cycle(vertex, parent, prev_parent, visited) == True:                                                # if the dfs traversal returns True, cycle is found, so return True
                 return True
         return False                                                                                                        # all vertices have been checked without returning True, so no cycle exists (False)
 
 
-    def dfs_cycle(self, cur_v=None, parent_v = None, list_v = None):
+    def dfs_cycle(self, cur_v=None, parent_v=None, prev_par=None, list_v = None):
         """
         Recursive helper method that does a regular dfs search on the list while keeping track of the current parent node. Extra condition
         involving neighbor-parent vertices comparison used to detect cycle in graph
@@ -287,9 +288,12 @@ class DirectedGraph:
         list_v[cur_v] = True                                                                                                # mark the current vertex as having been visited (True)
         for neighbor in range(len(self.adj_matrix[cur_v])):
             if self.adj_matrix[cur_v][neighbor] != 0 and list_v[neighbor] == False:                                         # if the neighbor is an actual neighbor (edge weight not 0) and unvisited, visit the neighbor recursively (dfs traversal),
-                cycle = self.dfs_cycle(neighbor, cur_v, list_v)                                                             # using neighbor as new current vertex, current vertex as parent, and the visited dict
+                prev_par = parent_v
+                cycle = self.dfs_cycle(neighbor, cur_v, parent_v, list_v)                                                             # using neighbor as new current vertex, current vertex as parent, and the visited dict
                 if cycle == True:
                     return True
+                else:
+                    parent_v = prev_par
             elif self.adj_matrix[cur_v][neighbor] != 0 and neighbor != parent_v:                                            # if the neighbor has been visited, and the neighbor is not the parent of the current vertex, cycle found
                 return True
         list_v[cur_v] = False                                                                                               # if the recursive call returns false(no cycle found on current directed path), reset the visited vertex to False (resetting graph for different path)
@@ -413,3 +417,11 @@ if __name__ == '__main__':
     print (new)
     test = new.dijkstra(11)
     print(test)
+
+    print("\nPDF - method has_cycle() gradescop example 1")
+    print("----------------------------------")
+    edges = [(1, 6, 6), (2, 8, 3), (2, 12, 5), (3, 1, 5),
+             (3, 12, 6), (5, 4, 3), (5, 8, 1), (7, 2, 13),
+             (8, 2, 9), (10, 7, 5), (11, 12, 4), (12, 0, 16)]
+    g = DirectedGraph(edges)
+    print(g.get_edges(), g.has_cycle(), sep='\n')
