@@ -272,7 +272,28 @@ class DirectedGraph:
         in the graph. It returns a list containing the shortest path found (smallest sum of edges) between the source vertex
         to the destination vertex.
         """
-        shortest_path = []
+        visited = ['inf' for x in range(self.v_count)]
+        visited[src] = 0
+        pq = []
+        heapq.heappush(pq,(0, src))
+        while pq:
+            current = heapq.heappop(pq)                                                                                     # front vertex of priority queue
+            v = current[1]
+            d = current[0]                                                                                                  # distance of vertex
+            if v not in visited:
+                visited[v] = d
+            if d <= visited[v]:
+                for n in range(self.v_count):                                                                               # for all vertices in graph
+                    n_d = self.adj_matrix[v][n]                                                                             # n_d is distance from current vertex to n (neighboring) vertex
+                    if n_d!= 0:                                                                                             # if n is actually neighbor of v (n_d not zero)
+                        if visited[n] == 'inf':
+                            visited[n] = d+n_d
+                            heapq.heappush(pq, (d + n_d, n))                                                                # push (neighbor, total distance) to priority queue, where total distance = distance travelled so far + distance from current vertex to neighbor)
+                        elif d+n_d < visited[n]:
+                            visited[n] = d+n_d
+                            heapq.heappush(pq, (d + n_d, n))
+        return visited
+
 
 
 
@@ -346,6 +367,7 @@ if __name__ == '__main__':
     edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
              (3, 1, 5), (2, 1, 23), (3, 2, 7)]
     g = DirectedGraph(edges)
+    print(g)
     for i in range(5):
         print(f'DIJKSTRA {i} {g.dijkstra(i)}')
     g.remove_edge(4, 3)
