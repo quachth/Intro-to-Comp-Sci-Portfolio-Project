@@ -295,14 +295,17 @@ class UndirectedGraph:
     def has_cycle(self)-> bool:
         """
         Method that returns True if the graph contains at least one cycle, and False otherwise. It uses a recursive helper method
-        to do a regular (non-alphabetical) DFS traversal on the graph to check for cycles.
+        to do a regular (non-alphabetical) DFS traversal on the graph to check for cycles. This code was written using references
+        to the DFS/BFS algorithm in the exploration Working with Graphs and the algorithm from
+        https://www.interviewbit.com/tutorial/depth-first-search/ for generic DFS, except it uses boolean values instead of an
+        empty set to mark a vertex as visited or not (True or False)
         """
-        for vertex in self.adj_list:                                                                                           # checks all vertices
+        for vertex in self.adj_list:                                                                                        # checks all vertices
 
             # Initialize visited dictionary -> each key is vertex, initialized to False (unvisited)
-            visited = {vertex: False for vertex in self.adj_list}                                                                 # Must be initialized within for loop for each component looked at. Otherwise would retain 'True' value from previous components
+            visited = {vertex: False for vertex in self.adj_list}                                                           # Must be initialized within for loop for each component looked at. Otherwise would retain 'True' value from previous components
             parent = None                                                                                                   # initialize parent variable to None within for loop
-            if self.dfs_cycle(vertex, parent, visited) == True:                                                                # if the dfs traversal returns True, cycle is found, so return True
+            if self.dfs_cycle(vertex, parent, visited) == True:                                                             # if the dfs traversal returns True, cycle is found, so return True
                 return True
         return False                                                                                                        # all vertices have been checked without returning True, so no cycle exists (False)
 

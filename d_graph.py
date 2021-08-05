@@ -262,7 +262,8 @@ class DirectedGraph:
     def has_cycle(self)-> bool:
         """
         Method that returns True if the graph contains at least one cycle, and False otherwise. It uses a recursive helper method
-        to do a regular DFS traversal on the graph to check for cycles.
+        to do a regular DFS traversal on the graph to check for cycles. Code for detecting cycle in directed graph is modified version
+        of undirected graph (with modifications to include adjacency matrix and removal or parent vertex tracker
         """
         for vertex in range(len(self.adj_matrix)):                                                                          # checks all vertices
 
