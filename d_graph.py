@@ -18,7 +18,6 @@ class DirectedGraph:
     def __init__(self, start_edges=None):
         """
         Store graph info as adjacency matrix
-        DO NOT CHANGE THIS METHOD IN ANY WAY
         """
         self.v_count = 0
         self.adj_matrix = []
@@ -37,7 +36,6 @@ class DirectedGraph:
     def __str__(self):
         """
         Return content of the graph in human-readable form
-        DO NOT CHANGE THIS METHOD IN ANY WAY
         """
         if self.v_count == 0:
             return 'EMPTY GRAPH\n'
