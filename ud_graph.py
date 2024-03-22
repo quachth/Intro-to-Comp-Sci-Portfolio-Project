@@ -17,7 +17,6 @@ class UndirectedGraph:
     def __init__(self, start_edges=None):
         """
         Store graph info as adjacency list
-        DO NOT CHANGE THIS METHOD IN ANY WAY
         """
         self.adj_list = dict()
 
@@ -30,7 +29,6 @@ class UndirectedGraph:
     def __str__(self):
         """
         Return content of the graph in human-readable form
-        DO NOT CHANGE THIS METHOD IN ANY WAY
         """
         out = [f'{v}: {self.adj_list[v]}' for v in self.adj_list]
         out = '\n  '.join(out)
